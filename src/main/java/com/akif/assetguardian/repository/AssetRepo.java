@@ -12,6 +12,4 @@ public interface AssetRepo extends JpaRepository<Asset,Integer> {
     @Query("SELECT a FROM Asset a WHERE LOWER(a.name) LIKE LOWER(CONCAT('%', :assetName, '%'))")
     List<Asset> findByNameContainingIgnoreCase(String assetName);
 
-    /*@Query("SELECT a FROM Asset a WHERE a.id IN :id")
-    List<Asset> findByAllId(List<Integer> id);*/
 }

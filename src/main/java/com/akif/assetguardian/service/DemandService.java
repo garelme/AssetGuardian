@@ -10,9 +10,12 @@ import com.akif.assetguardian.repository.CategoryRepo;
 import com.akif.assetguardian.repository.DemandRepo;
 import com.akif.assetguardian.repository.UserRepo;
 import com.akif.assetguardian.utils.SecurityUtils;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -85,5 +88,46 @@ public class DemandService {
         Demand savedDemand = demandRepo.save(newDemand);
 
         return mapToResponse(savedDemand);
+    }
+
+    @Transactional
+    public AssetDemandResponse updateDemand(AssetDemandRequest assetDemandRequest, int demandId) throws AccessDeniedException {
+        Demand existingDemand = demandRepo.findById(demandId)
+                .orElseThrow(() -> new EntityNotFoundException("Talep bulunamadı"));
+
+        if (!SecurityUtils.isOwnerOrAdmin(existingDemand.getUser().getId())) {
+            throw new AccessDeniedException("Bu talebi güncelleme yetkiniz yok!");
+        }
+
+        if (!existingDemand.getStatus().equals(DemandStatus.PENDING)){
+            throw new IllegalStateException("Sadece beklemedeki talepler güncellenebilir!");
+        }
+
+        Category category = categoryRepo.findById(assetDemandRequest.categoryId())
+                .orElseThrow(() -> new EntityNotFoundException("Kategori bulunamadı"));
+
+        existingDemand.setCategory(category);
+        existingDemand.setDescription(assetDemandRequest.notes());
+        existingDemand.setUrgency(assetDemandRequest.urgency());
+
+        demandRepo.save(existingDemand);
+        return mapToResponse(demandRepo.save(existingDemand));
+
+    }
+
+    @Transactional
+    public void deleteDemand(int demandId) {
+        Demand existingDemand = demandRepo.findById(demandId)
+                .orElseThrow(() -> new EntityNotFoundException("Talep bulunamadı"));
+
+        if (!SecurityUtils.isOwnerOrAdmin(existingDemand.getUser().getId())) {
+            throw new AccessDeniedException("Bu talebi silme yetkiniz yok!");
+        }
+        if (!existingDemand.getStatus().equals(DemandStatus.PENDING)){
+            throw new IllegalStateException("Sadece beklemedeki talepler silinebilir!");
+        }
+
+        demandRepo.delete(existingDemand);
+
     }
 }

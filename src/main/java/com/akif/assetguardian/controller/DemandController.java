@@ -29,5 +29,17 @@ public class DemandController {
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
+    @PutMapping("/{demandId}")
+    public ResponseEntity<AssetDemandResponse> updateDemand(@PathVariable int demandId,@RequestBody AssetDemandRequest assetDemandRequest) {
+        AssetDemandResponse response = demandService.updateDemand(assetDemandRequest,demandId);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{demandId}")
+    public ResponseEntity<Void> deleteDemand(@PathVariable int demandId) {
+        demandService.deleteDemand(demandId);
+        return ResponseEntity.noContent().build();
+    }
+
 
 }

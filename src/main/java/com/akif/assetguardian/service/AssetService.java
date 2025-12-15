@@ -11,6 +11,7 @@ import com.akif.assetguardian.repository.AssetRepo;
 import com.akif.assetguardian.repository.AssignmentRepo;
 import com.akif.assetguardian.repository.CategoryRepo;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,12 +20,13 @@ import java.util.Optional;
 
 
 @Service
+@RequiredArgsConstructor
 public class AssetService {
-    @Autowired
+
     CategoryRepo categoryRepo;
-    @Autowired
+
     AssetRepo assetRepo;
-    @Autowired
+
     AssignmentRepo assignmentRepo;
 
 

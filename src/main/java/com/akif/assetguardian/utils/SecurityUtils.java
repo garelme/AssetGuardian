@@ -5,7 +5,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 
-//İşlemler için güvenlik bağlamından geçerli kullanıcı bilgilerini alır
+//İşlemler için güvenlik bağlamından geçerli kullanıcı bilgilerini alır.
 public class SecurityUtils {
 
     private SecurityUtils() {

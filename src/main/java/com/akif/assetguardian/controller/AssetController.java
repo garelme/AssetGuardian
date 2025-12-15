@@ -20,7 +20,6 @@ public class AssetController {
     private final AssetService assetService;
 
 
-    // Get all assets with optional name filter
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<AssetResponse>> getAllAssets(@RequestParam(required = false) String name) {
@@ -45,7 +44,7 @@ public class AssetController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/batch-delete")
+    @PostMapping("/batch-delete") //URL becomes unnecessarily long if we use DELETEMAPPING method with PathVariable
     public ResponseEntity<List<AssetResponse>> deleteAssets(@RequestBody List<Integer> ids) {
         List<AssetResponse> response = assetService.deleteAssets(ids);
         return new ResponseEntity<>(response, HttpStatus.OK);
