@@ -68,7 +68,7 @@ public class AuthService {
 
     }
 
-    public AuthResponse mapToAuthResponse(User user) {
+    private AuthResponse mapToAuthResponse(User user) {
         String token = jwtService.generateToken(new MyUserDetails(user));
 
         return new AuthResponse(

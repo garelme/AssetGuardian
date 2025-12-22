@@ -45,7 +45,7 @@ public class DemandService {
 
     }
 
-    public AssetDemandResponse mapToResponse(Demand demand) {
+    private AssetDemandResponse mapToResponse(Demand demand) {
         String allocatedAssetName;
 
         if(demand.getStatus() == DemandStatus.APPROVED && demand.getAssignedAsset() != null){
@@ -129,5 +129,31 @@ public class DemandService {
 
         demandRepo.delete(existingDemand);
 
+    }
+
+    @Transactional
+    public void approveDemand(int demandId) {
+        Demand existingDemand = demandRepo.findById(demandId)
+                .orElseThrow(() -> new EntityNotFoundException("Demand not found"));
+
+        if (!existingDemand.getStatus().equals(DemandStatus.PENDING)){
+            throw new IllegalStateException("Demand is not in PENDING status");
+        }
+
+        existingDemand.setStatus(DemandStatus.APPROVED);
+        demandRepo.save(existingDemand);
+    }
+
+    @Transactional
+    public void rejectDemand(int demandId) {
+        Demand existingDemand = demandRepo.findById(demandId)
+                .orElseThrow(() -> new EntityNotFoundException("Demand not found"));
+
+        if (!existingDemand.getStatus().equals(DemandStatus.PENDING)){
+            throw new IllegalStateException("Demand is not in PENDING status");
+        }
+
+        existingDemand.setStatus(DemandStatus.REJECTED);
+        demandRepo.save(existingDemand);
     }
 }

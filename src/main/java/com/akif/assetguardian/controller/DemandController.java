@@ -6,9 +6,12 @@ import com.akif.assetguardian.service.DemandService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.akif.assetguardian.utils.SecurityUtils.hasRole;
 
 @RestController
 @RequestMapping("/demands")
@@ -41,5 +44,17 @@ public class DemandController {
         return ResponseEntity.noContent().build();
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PutMapping("/{demandId}/approve")
+    public ResponseEntity<Void> approveDemand(@PathVariable int demandId) {
+        demandService.approveDemand(demandId);
+        return ResponseEntity.ok().build();
+    }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    @PutMapping("/{demandId}/reject")
+    public ResponseEntity<Void> rejectDemand(@PathVariable int demandId) {
+        demandService.rejectDemand(demandId);
+        return ResponseEntity.ok().build();
+    }
 }

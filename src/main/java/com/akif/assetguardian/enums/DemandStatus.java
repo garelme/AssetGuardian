@@ -4,4 +4,5 @@ public enum DemandStatus {
     PENDING,
     APPROVED,
     REJECTED,
+    COMPLETED
 }

@@ -23,11 +23,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AssetService {
 
-    CategoryRepo categoryRepo;
+    private final CategoryRepo categoryRepo;
 
-    AssetRepo assetRepo;
+    private final AssetRepo assetRepo;
 
-    AssignmentRepo assignmentRepo;
+    private final AssignmentRepo assignmentRepo;
 
 
     @Transactional

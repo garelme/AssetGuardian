@@ -8,9 +8,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class MyUserDetails implements UserDetails {
-    //Class of UserPrincipal for Spring Security
-
-
     private User user;
 
     public MyUserDetails(User user) {

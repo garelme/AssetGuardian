@@ -3,14 +3,18 @@ package com.akif.assetguardian.DTO;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+import java.time.LocalDate;
+
 public record AssetAllocationRequest(
         @NotNull(message = "Eşya seçilmeli!")
         @Positive(message = "Geçersiz Eşya ID!")
-        String assetId,
+        int assetId,
 
-        @NotNull(message = "Personel seçilmeli!")
-        @Positive(message = "Geçersiz User ID!")
-        int userId,
+        @NotNull
+        @Positive(message = "Geçersiz Eşya ID!")
+        int demandId,
+
+        LocalDate returnDate,
 
         // Ek notlar(opsiyonel) belki eksik bir şey vermiş olabilir.
         String notes
