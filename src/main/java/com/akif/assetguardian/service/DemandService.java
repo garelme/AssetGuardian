@@ -29,7 +29,7 @@ public class DemandService {
     public List<AssetDemandResponse> getAllDemands(String filter) {
         List<Demand> demands;
         if (SecurityUtils.hasRole("ROLE_ADMIN")){
-            if (filter != null && !filter.isEmpty()) {
+            if (filter != null && !filter.trim().isEmpty()) {
                 demands = demandRepo.searchAll(filter);
             }
             else

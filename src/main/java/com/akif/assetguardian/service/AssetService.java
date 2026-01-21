@@ -57,7 +57,7 @@ public class AssetService {
     public List<AssetResponse> getAllAssets(String name) {
         List<Asset> assets;
 
-        if(name != null && !name.isEmpty())
+        if(name != null && !name.trim().isEmpty())
             assets = assetRepo.findByNameContainingIgnoreCase(name);
         else
             assets = assetRepo.findAll();

@@ -4,12 +4,16 @@ package com.akif.assetguardian.model;
 import com.akif.assetguardian.enums.AssignmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 public class Assignment extends BaseEntity {
     @ManyToOne
@@ -26,5 +30,9 @@ public class Assignment extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "assigned_by", nullable = false)
     private User assignedBy;
+
+
+    @Column(name = "assigned_date", updatable = false, nullable = false)
+    private LocalDate assignedDate;
 
 }

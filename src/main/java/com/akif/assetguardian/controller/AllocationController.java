@@ -15,6 +15,7 @@ import java.util.List;
 @RequestMapping("/api/v1/allocation")
 @RequiredArgsConstructor
 public class AllocationController {
+
     private final AllocationService allocationService;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

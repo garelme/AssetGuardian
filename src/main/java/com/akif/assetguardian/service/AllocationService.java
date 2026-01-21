@@ -3,16 +3,14 @@ package com.akif.assetguardian.service;
 
 import com.akif.assetguardian.DTO.AssetAllocationResponse;
 import com.akif.assetguardian.enums.AssetStatus;
+import com.akif.assetguardian.enums.AssignmentStatus;
 import com.akif.assetguardian.enums.DemandStatus;
-import com.akif.assetguardian.model.Allocation;
-import com.akif.assetguardian.model.Asset;
-import com.akif.assetguardian.model.Demand;
-import com.akif.assetguardian.repository.AllocationRepo;
-import com.akif.assetguardian.repository.AssetRepo;
-import com.akif.assetguardian.repository.DemandRepo;
+import com.akif.assetguardian.model.*;
+import com.akif.assetguardian.repository.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,10 +22,14 @@ public class AllocationService {
     private final DemandRepo demandRepo;
     private final AssetRepo assetRepo;
     private final AllocationRepo allocationRepo;
+    private final AssignmentRepo assignmentRepo;
+    private final UserRepo userRepo;
 
     @Transactional
-    public void allocateAssetToDemand(int assetId, int demandId, LocalDate returnDate, String notes) {
+    public void allocateAssetToDemand(int assetId, int demandId, LocalDate returnDate, String notes)  {
         Demand demand = demandRepo.findById(demandId).orElseThrow(() -> new EntityNotFoundException("Demand not found"));
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User adminOrManager = userRepo.findByUsername(currentUsername);
 
         if (demand.getStatus() != DemandStatus.APPROVED) {
             throw new IllegalStateException("Invalid demand status for allocation: " + demand.getStatus());
@@ -46,6 +48,8 @@ public class AllocationService {
         allocation.setUser(demand.getUser());
         allocation.setNotes(notes);
 
+        updateAssignments(demand.getUser(),asset,AssignmentStatus.ACTIVE,adminOrManager,LocalDate.now());
+
         asset.setStatus(AssetStatus.ASSIGNED);
 
         demand.setAssignedAsset(asset);
@@ -56,6 +60,7 @@ public class AllocationService {
         allocationRepo.save(allocation);
     }
 
+    @Transactional
     public void returnAllocatedAsset(int allocationId) {
         Allocation allocation = allocationRepo.findById(allocationId)
                 .orElseThrow(() -> new EntityNotFoundException("No allocation record found! ID: " + allocationId));
@@ -65,8 +70,13 @@ public class AllocationService {
         allocation.setActive(false);
         allocation.setReturnDate(LocalDate.now());
 
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        User adminOrManager = userRepo.findByUsername(currentUsername);
+
         Asset asset = allocation.getAsset();
         asset.setStatus(AssetStatus.IN_STOCK);
+
+        updateAssignments(allocation.getUser(), asset, AssignmentStatus.RETURNED, adminOrManager,LocalDate.now());
 
         allocationRepo.save(allocation);
         assetRepo.save(asset);
@@ -94,5 +104,17 @@ public class AllocationService {
                 allocation.getReturnDate(),
                 allocation.getNotes()
         );
+    }
+
+    @Transactional
+    public void updateAssignments(User user, Asset asset, AssignmentStatus status, User assignedBy, LocalDate assignedDate){
+        Assignment assignment = Assignment.builder()
+                .user(user)
+                .asset(asset)
+                .status(status)
+                .assignedBy(assignedBy)
+                .assignedDate(assignedDate)
+                .build();
+        assignmentRepo.save(assignment);
     }
 }

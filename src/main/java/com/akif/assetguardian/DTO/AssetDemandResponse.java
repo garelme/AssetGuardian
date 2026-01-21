@@ -2,6 +2,7 @@ package com.akif.assetguardian.DTO;
 
 import com.akif.assetguardian.enums.DemandStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record AssetDemandResponse(
@@ -11,5 +12,5 @@ public record AssetDemandResponse(
     String categoryName,
     String allocatedAssetName,
     DemandStatus status,
-    LocalDateTime requestDate
+    LocalDate requestDate
 ) { }

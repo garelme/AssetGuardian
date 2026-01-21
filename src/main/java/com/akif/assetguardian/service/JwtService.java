@@ -26,7 +26,7 @@ public class JwtService {
     @Value("${application.security.jwt.expiration}")
     private long jwtExpiration; // Milisaniye cinsinden
 
-    // 2. Token Üretme (Kullanıcı Adı + Roller)
+    // 2. Token Üretme (Kullanıcı Adı + Roller + Tokenin son kullanma tarihi)
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", userDetails.getAuthorities());
@@ -40,7 +40,7 @@ public class JwtService {
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact();
+                .compact();//json formatında yapıyor.
     }
 
 
