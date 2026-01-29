@@ -15,15 +15,7 @@ public class SecurityUtils {
         if(authentication != null && authentication.getPrincipal() instanceof MyUserDetails myUserDetails){
             return myUserDetails.getUser().getId();
         }
-        return null;
-    }
-
-    public static String getCurrentUsername(){
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.isAuthenticated()) {
-            return authentication.getName();
-        }
-        return "Kullanıcı bulunamadı";
+        throw new RuntimeException("Bu işlem için giriş yapmanız gerekmektedir!");
     }
 
     public static boolean hasRole(String role){

@@ -11,17 +11,17 @@ INSERT INTO category (id, name, description, created_at, is_deleted) VALUES
 -- 2. KULLANICILAR (Users)
 -- Şifrelerin hepsi: 123456
 -- ==========================================
-INSERT INTO users (id,name,username, email, password, role, department, created_at, is_deleted) VALUES
+INSERT INTO users (id,name,username, email, password, role, department, created_at, is_deleted, profileImagePath) VALUES
 -- Admin Kullanıcısı (IT Departmanı)
-(1,'Mehmet Akif Alan' ,'admin', 'admin@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'ADMIN', 'IT', NOW(), false),
+(1,'Mehmet Akif Alan' ,'admin', 'admin@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'ADMIN', 'IT', NOW(), false, 'default-avatar.png'),
 
 -- Yönetici (Manager)
-(2,'Hamdi Tanpınar' ,'mudur_bey', 'mudur@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'MANAGER', 'MANAGEMENT', NOW(), false),
+(2,'Hamdi Tanpınar' ,'mudur_bey', 'mudur@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'MANAGER', 'MANAGEMENT', NOW(), false, 'default-avatar.png'),
 
 -- Standart Çalışanlar (Personel)
-(3,'Ahmet Yılmaz', 'ahmet_yilmaz', 'ahmet@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'USER', 'IT', NOW(), false),
-(4,'Ayşe demir', 'ayse_demir', 'ayse@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'USER', 'HR', NOW(), false),
-(5, 'Mehmet Öz','mehmet_oz', 'mehmet@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'USER', 'SALES', NOW(), false);
+(3,'Ahmet Yılmaz', 'ahmet_yilmaz', 'ahmet@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'USER', 'IT', NOW(), false, 'default-avatar.png'),
+(4,'Ayşe demir', 'ayse_demir', 'ayse@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'USER', 'HR', NOW(), false, 'default-avatar.png'),
+(5, 'Mehmet Öz','mehmet_oz', 'mehmet@sirket.com', '$2a$10$R/h5X.5r.t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/t5/', 'USER', 'SALES', NOW(), false, 'default-avatar.png');
 
 -- ==========================================
 -- 3. DEMİRBAŞLAR (Assets)

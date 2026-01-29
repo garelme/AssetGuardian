@@ -43,15 +43,7 @@ public class AssetService {
 
         Asset dbAsset = assetRepo.save(savedAsset);
 
-        return new AssetResponse(
-                dbAsset.getId(),
-                dbAsset.getName(),
-                dbAsset.getSerialNumber(),
-                dbAsset.getPrice(),
-                dbAsset.getCategory().getName(),
-                dbAsset.getStatus(),
-                null
-        );
+        return mapToResponse(dbAsset);
     }
 
     public List<AssetResponse> getAllAssets(String name) {

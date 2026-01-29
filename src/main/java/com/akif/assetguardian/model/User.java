@@ -30,4 +30,7 @@ public class User extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     Department department;
+
+    @Column(name = "profile_image_path", nullable = false)
+    private String profileImagePath = "default-avatar.png";
 }

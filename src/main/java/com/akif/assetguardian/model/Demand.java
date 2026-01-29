@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 public class Demand extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
-    User user;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)

@@ -17,10 +17,10 @@ import java.util.List;
 @Entity
 public class Category extends BaseEntity{
     @Column(unique = true, nullable = false)
-    String name;
+    private String name;
 
     @OneToMany(mappedBy = "category")
     private List<Asset> assets = new ArrayList<>();
 
-    String description;
+    private String description;
 }
