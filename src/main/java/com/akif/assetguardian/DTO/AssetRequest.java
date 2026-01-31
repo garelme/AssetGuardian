@@ -17,7 +17,7 @@ public record AssetRequest(
 
 
         @NotNull(message = "Kategori seçilmelidir!")
-        int categoryId,
+        Integer categoryId,
 
         String description
 ) { }

@@ -21,10 +21,10 @@ public class AssignmentService {
         if(name != null && !name.trim().isEmpty())
             assignments = assignmentRepo.findByAssetNameOrUserNameContainingIgnoreCase(name);
         else
-            assignments = assignmentRepo.findAll();
+            assignments = assignmentRepo.findAllWithDetails();
 
         return assignments.stream()
-                .map(asset -> mapToResponse(asset))
+                .map(this::mapToResponse)
                 .toList();
     }
 
@@ -37,6 +37,4 @@ public class AssignmentService {
                 assignment.getUser().getDepartment().name()
         );
     }
-
-
 }

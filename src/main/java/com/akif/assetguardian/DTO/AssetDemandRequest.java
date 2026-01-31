@@ -5,8 +5,10 @@ import jakarta.validation.constraints.NotNull;
 
 public record AssetDemandRequest(
         @NotNull
-        int categoryId,
+        Integer categoryId,
+
+        @NotNull
         Urgency urgency,
-        //optional
+
         String notes
 ) { }

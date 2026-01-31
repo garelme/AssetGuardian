@@ -5,12 +5,14 @@ import com.akif.assetguardian.DTO.AssetAllocationResponse;
 import com.akif.assetguardian.enums.AssetStatus;
 import com.akif.assetguardian.enums.AssignmentStatus;
 import com.akif.assetguardian.enums.DemandStatus;
+import com.akif.assetguardian.exception.BadRequestException;
+import com.akif.assetguardian.exception.ResourceNotFoundException;
 import com.akif.assetguardian.model.*;
 import com.akif.assetguardian.repository.*;
+import com.akif.assetguardian.utils.SecurityUtils;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -28,17 +30,19 @@ public class AllocationService {
     @Transactional
     public void allocateAssetToDemand(int assetId, int demandId, LocalDate returnDate, String notes)  {
         Demand demand = demandRepo.findById(demandId).orElseThrow(() -> new EntityNotFoundException("Demand not found"));
-        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        User adminOrManager = userRepo.findByUsername(currentUsername);
+
+        Integer currentAdminId = SecurityUtils.getCurrentUserId();
+        User adminOrManager = userRepo.findById(currentAdminId)
+                .orElseThrow(() -> new ResourceNotFoundException("Authorized user not found with ID: " + currentAdminId));
 
         if (demand.getStatus() != DemandStatus.APPROVED) {
-            throw new IllegalStateException("Invalid demand status for allocation: " + demand.getStatus());
+            throw new BadRequestException("Allocation failed. Demand status must be 'APPROVED'. Current status: " + demand.getStatus());
         }
 
-        Asset asset = assetRepo.findById(assetId).orElseThrow(() -> new EntityNotFoundException("Asset not found"));
+        Asset asset = assetRepo.findById(assetId).orElseThrow(() -> new ResourceNotFoundException("Asset not found with ID: " + assetId));
 
         if(asset.getStatus() != AssetStatus.IN_STOCK){
-            throw new IllegalStateException("Only assets with status ‘IN_STOCK’ can be assigned. Current status:" + asset.getStatus());
+            throw new BadRequestException("Only assets with status ‘IN_STOCK’ can be assigned. Current status:" + asset.getStatus());
         }
 
         Allocation allocation = new Allocation();
@@ -55,31 +59,28 @@ public class AllocationService {
         demand.setAssignedAsset(asset);
         demand.setStatus(DemandStatus.COMPLETED);
 
-        demandRepo.save(demand);
-        assetRepo.save(asset);
         allocationRepo.save(allocation);
     }
 
     @Transactional
     public void returnAllocatedAsset(int allocationId) {
         Allocation allocation = allocationRepo.findById(allocationId)
-                .orElseThrow(() -> new EntityNotFoundException("No allocation record found! ID: " + allocationId));
+                .orElseThrow(() -> new ResourceNotFoundException("No allocation record found! ID: " + allocationId));
+
         if (!allocation.isActive()) {
-            throw new IllegalStateException("This allocation has already been returned. ID: " + allocationId);
+            throw new BadRequestException("This allocation has already been returned. ID: " + allocationId);
         }
+
         allocation.setActive(false);
         allocation.setReturnDate(LocalDate.now());
 
-        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        User adminOrManager = userRepo.findByUsername(currentUsername);
+        Integer currentAdminId = SecurityUtils.getCurrentUserId();
+        User adminOrManager = userRepo.findById(currentAdminId).orElseThrow(() -> new ResourceNotFoundException("Authorized user not found! ID: " + currentAdminId));
 
         Asset asset = allocation.getAsset();
         asset.setStatus(AssetStatus.IN_STOCK);
 
         updateAssignments(allocation.getUser(), asset, AssignmentStatus.RETURNED, adminOrManager,LocalDate.now());
-
-        allocationRepo.save(allocation);
-        assetRepo.save(asset);
     }
 
     public List<AssetAllocationResponse> getActiveAllocations() {
