@@ -17,8 +17,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
+    public ResponseEntity<UserUpdateResponse> getUserProfile() {
+        UserUpdateResponse response = userService.getCurrentUserProfile();
+        return ResponseEntity.ok(response);
+    }
 
-    @PutMapping("/setProfileImage")
+    @PutMapping("/profile-image")
     public ResponseEntity<String> setProfileImage(@RequestParam("image") MultipartFile image) {
         String photoUrl = userService.saveProfileImage(image);
         return ResponseEntity.ok("Profile image updated successfully" + photoUrl);
@@ -30,7 +34,7 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/changePassword")
+    @PutMapping("/password")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
         userService.changeUserPassword(changePasswordRequest);
         return ResponseEntity.ok("Password changed successfully");

@@ -29,7 +29,7 @@ public class AllocationService {
 
     @Transactional
     public void allocateAssetToDemand(int assetId, int demandId, LocalDate returnDate, String notes)  {
-        Demand demand = demandRepo.findById(demandId).orElseThrow(() -> new EntityNotFoundException("Demand not found"));
+        Demand demand = demandRepo.findById(demandId).orElseThrow(() -> new ResourceNotFoundException("Demand not found"));
 
         Integer currentAdminId = SecurityUtils.getCurrentUserId();
         User adminOrManager = userRepo.findById(currentAdminId)

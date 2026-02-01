@@ -76,4 +76,10 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(request.newPassword()));
         userRepo.save(user);
     }
+
+    public UserUpdateResponse getCurrentUserProfile() {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return mapToResponse(user);
+    }
 }
