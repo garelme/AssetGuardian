@@ -6,19 +6,20 @@ import jakarta.validation.constraints.Size;
 
 
 public record RegisterRequest(
-        @NotBlank(message = "İsim boş olamaz")
+        @NotBlank(message = "Name cannot be blank!")
         String name,
 
-        @NotBlank(message = "Kullanıcı adı boş olamaz")
+        @NotBlank(message = "Username cannot be blank!")
         String username,
 
-        @NotBlank
-        @Size(min = 6, message = "Şifre en az 6 karakter olmalı")
+        @NotBlank(message = "Password cannot be blank!")
+        @Size(min = 6, message = "Password must be at least 6 characters long!")
         String password,
 
-        @Email(message = "Geçerli bir e-posta giriniz")
+        @Email(message = "Please enter a valid email address!")
+        @NotBlank(message = "Email cannot be blank!")
         String email,
 
-        @NotBlank(message = "Rol seçilmelidir")
+        @NotBlank(message = "Department is required!")
         String department
 ) { }

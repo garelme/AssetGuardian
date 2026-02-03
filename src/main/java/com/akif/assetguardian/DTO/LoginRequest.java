@@ -3,9 +3,9 @@ package com.akif.assetguardian.DTO;
 import jakarta.validation.constraints.NotBlank;
 
 public record LoginRequest(
-        @NotBlank(message = "Kullanici adi boş olamaz!")
+        @NotBlank(message = "Username cannot be blank!")
         String username,
 
-        @NotBlank(message = "Şifre boş olamaz!")
+        @NotBlank(message = "Password cannot be blank!")
         String password
 ) { }

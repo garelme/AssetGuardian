@@ -1,22 +1,18 @@
 package com.akif.assetguardian.DTO;
 
 import com.akif.assetguardian.enums.Department;
-import com.akif.assetguardian.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record UserUpdateRequest(
-        @NotBlank(message = "İsim boş olamaz!")
+        @NotBlank(message = "Name cannot be blank!")
         String name,
 
-        @Email(message = "Geçerli bir e-posta giriniz!")
-        @NotBlank(message = "E-posta boş olamaz!")
+        @Email(message = "Please enter a valid email address!")
+        @NotBlank(message = "Email cannot be blank!")
         String email,
 
-        @NotNull(message = "Departman seçilmelidir!")
-        Department department,
-
-        @NotNull(message = "Rol seçilmelidir!")
-        Role role
+        @NotNull(message = "Department is required!")
+        Department department
 ) { }

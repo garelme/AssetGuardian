@@ -9,6 +9,8 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepo extends JpaRepository<Category,Integer> {
+
     @Query("SELECT a FROM Category a WHERE a.name = :name")
     Optional<Category> findByCategoryName(String name);
+
 }

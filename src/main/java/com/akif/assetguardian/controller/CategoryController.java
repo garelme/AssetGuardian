@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
-@RequestMapping("/api/v1/category")
+@RestController
+@RequestMapping("/api/v1/categories")
 @RequiredArgsConstructor
 @Validated
 public class CategoryController {
     private final CategoryService categoryService;
 
-    @PreAuthorize("hasrole('ADMIN','MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @PostMapping
     public ResponseEntity<Category> addCategory(@RequestBody Category category){ //CategoryRequest DTO yazılacak.
         categoryService.save(category);
@@ -35,8 +35,8 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasrole('ADMIN','MANAGER')")
-    @PostMapping("delete/{categoryID}")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
+    @DeleteMapping("/{categoryID}")
     public ResponseEntity<Category> deleteCategory(@Positive(message = "Category ID must be a positive value!") @PathVariable int categoryID){ //CategoryResponse DTO yazılacak.
         categoryService.delete(categoryID);
         return new ResponseEntity<>(HttpStatus.OK);

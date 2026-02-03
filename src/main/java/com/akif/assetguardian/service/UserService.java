@@ -3,11 +3,14 @@ package com.akif.assetguardian.service;
 import com.akif.assetguardian.DTO.ChangePasswordRequest;
 import com.akif.assetguardian.DTO.UserUpdateRequest;
 import com.akif.assetguardian.DTO.UserUpdateResponse;
+import com.akif.assetguardian.enums.Role;
 import com.akif.assetguardian.exception.BadRequestException;
 import com.akif.assetguardian.exception.ResourceNotFoundException;
 import com.akif.assetguardian.model.User;
 import com.akif.assetguardian.repository.UserRepo;
 import com.akif.assetguardian.utils.SecurityUtils;
+import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,24 +31,26 @@ public class UserService {
     private final StorageService storageService;
     private final PasswordEncoder passwordEncoder;
 
+    @Transactional
     public String saveProfileImage(MultipartFile image) {
-        Integer userId = SecurityUtils.getCurrentUserId();
-        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getCurrentUserOrThrow();
 
         String fileName = storageService.save(image);
 
         user.setProfileImagePath(fileName);
-        userRepo.save(user);
         return fileName;
     }
 
+    @Transactional
     public UserUpdateResponse updateUserProfile(UserUpdateRequest userUpdateRequest) {
-        Integer userId = SecurityUtils.getCurrentUserId();
-        User user = userRepo.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = getCurrentUserOrThrow();
+
+        if (!user.getEmail().equals(userUpdateRequest.email()) && userRepo.existsByEmail(userUpdateRequest.email())) {
+            throw new BadRequestException("This email is already taken!");
+        }
 
         user.setName(userUpdateRequest.name());
         user.setEmail(userUpdateRequest.email());
-        user.setRole(userUpdateRequest.role());
         user.setDepartment(userUpdateRequest.department());
 
         return mapToResponse(user);
@@ -62,24 +67,49 @@ public class UserService {
         );
     }
 
+    @Transactional
     public void changeUserPassword(ChangePasswordRequest request) {
         if (!request.newPassword().equals(request.newPasswordConfirm())) {
-            throw new BadRequestException("Yeni şifreler birbiriyle uyuşmuyor!");
+            throw new BadRequestException("New passwords do not match!");
         }
-        Integer userId = SecurityUtils.getCurrentUserId();
-        User user = userRepo.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Kullanıcı bulunamadı."));
+
+        User user = getCurrentUserOrThrow();
 
         if (!passwordEncoder.matches(request.oldPassword(), user.getPassword())) {
-            throw new BadRequestException("Mevcut şifreniz hatalı!");
+            throw new BadRequestException("Current password is incorrect!");
         }
         user.setPassword(passwordEncoder.encode(request.newPassword()));
-        userRepo.save(user);
     }
 
     public UserUpdateResponse getCurrentUserProfile() {
         Integer userId = SecurityUtils.getCurrentUserId();
         User user = userRepo.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         return mapToResponse(user);
+    }
+
+    private User getCurrentUserOrThrow() {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        return userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+    }
+
+    @Transactional
+    public void updateUserRole(Integer userId,Role newRole) {
+        User user = userRepo.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        int currentAdminId = SecurityUtils.getCurrentUserId();
+
+        if (user.getId() == currentAdminId && newRole != Role.ADMIN) {
+            throw new BadRequestException("You cannot change yourself! Another admin must change your role.");
+        }
+
+        if (user.getRole() == Role.ADMIN && newRole != Role.ADMIN) {
+            if (userRepo.countByRole(Role.ADMIN) <= 2) {
+                throw new BadRequestException("System must have at least two administrator!");
+            }
+        }
+
+        user.setRole(newRole);
     }
 }

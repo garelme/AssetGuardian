@@ -18,9 +18,9 @@ import java.util.List;
 @RequestMapping("/api/v1/assignments")
 public class AssignmentController {
 
-    AssignmentService assignmentService;
+    private final AssignmentService assignmentService;
 
-    @PreAuthorize("hasrole('ADMIN','MANAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN','MANAGER')")
     @GetMapping
     public ResponseEntity<List<AssignmentResponse>> getAllAssignment (@RequestParam(required = false) String name){
         List<AssignmentResponse> response = assignmentService.getAllAssignments(name);

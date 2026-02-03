@@ -5,18 +5,17 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record AssetRequest(
-        @NotBlank(message="İsim boş olamaz!")
+        @NotBlank(message = "Name cannot be blank!")
         String name,
 
-        @NotBlank(message="Seri numarası boş olamaz!")
+        @NotBlank(message = "Serial number cannot be blank!")
         String serialNumber,
 
-        @NotNull(message = "Fiyat boş olamaz!")
-        @Positive(message = "Fiyat pozitif bir değer olmalıdır!")
-        int price,
+        @NotNull(message = "Price is required!")
+        @Positive(message = "Price must be a positive value!")
+        Integer price,
 
-
-        @NotNull(message = "Kategori seçilmelidir!")
+        @NotNull(message = "Category ID is required!")
         Integer categoryId,
 
         String description

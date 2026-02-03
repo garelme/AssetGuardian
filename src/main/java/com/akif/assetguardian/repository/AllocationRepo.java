@@ -7,5 +7,7 @@ import java.util.List;
 
 @Repository
 public interface AllocationRepo extends JpaRepository<Allocation, Integer> {
+
     List<Allocation> findByIsActiveTrue();
+
 }

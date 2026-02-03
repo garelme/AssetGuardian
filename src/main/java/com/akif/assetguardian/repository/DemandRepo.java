@@ -16,4 +16,5 @@ public interface DemandRepo extends JpaRepository<Demand,Integer> {
     List<Demand> findByStatus(DemandStatus status);
 
     List<Demand> findByUserIdAndStatus(Integer userId, DemandStatus demandStatus);
+
 }
