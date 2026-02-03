@@ -33,10 +33,22 @@ public class UserService {
 
     @Transactional
     public String saveProfileImage(MultipartFile image) {
+
+        if (image.isEmpty()) {
+            throw new BadRequestException("File cannot be empty!");
+        }
+
+        String contentType = image.getContentType();
+        if (contentType == null || !contentType.startsWith("image/")) {
+            throw new BadRequestException("Only image files (JPEG, PNG, etc.) are allowed!");
+        }
+
+        if (image.getSize() > 5 * 1024 * 1024) {
+            throw new BadRequestException("File size exceeds the limit of 5MB!");
+        }
+
         User user = getCurrentUserOrThrow();
-
         String fileName = storageService.save(image);
-
         user.setProfileImagePath(fileName);
         return fileName;
     }

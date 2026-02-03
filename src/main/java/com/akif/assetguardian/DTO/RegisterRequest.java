@@ -1,7 +1,9 @@
 package com.akif.assetguardian.DTO;
 
+import com.akif.assetguardian.enums.Department;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 
@@ -20,6 +22,6 @@ public record RegisterRequest(
         @NotBlank(message = "Email cannot be blank!")
         String email,
 
-        @NotBlank(message = "Department is required!")
-        String department
+        @NotNull(message = "Department is required!")
+        Department department
 ) { }

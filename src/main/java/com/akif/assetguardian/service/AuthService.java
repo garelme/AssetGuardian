@@ -3,8 +3,10 @@ package com.akif.assetguardian.service;
 import com.akif.assetguardian.DTO.AuthResponse;
 import com.akif.assetguardian.DTO.LoginRequest;
 import com.akif.assetguardian.DTO.RegisterRequest;
-import com.akif.assetguardian.enums.Department;
 import com.akif.assetguardian.enums.Role;
+import com.akif.assetguardian.exception.AccessDeniedException;
+import com.akif.assetguardian.exception.BadRequestException;
+import com.akif.assetguardian.exception.ResourceNotFoundException;
 import com.akif.assetguardian.model.MyUserDetails;
 import com.akif.assetguardian.model.User;
 import com.akif.assetguardian.repository.UserRepo;
@@ -29,7 +31,7 @@ public class AuthService {
     public AuthResponse register(RegisterRequest request) {
 
         if (userRepo.existsByUsername(request.username())) {
-            throw new RuntimeException("Bu kullanıcı adı zaten alınmış!");
+            throw new BadRequestException("Bu kullanıcı adı zaten alınmış!");
         }
 
         User user = new User();
@@ -38,13 +40,10 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setEmail(request.email());
         user.setRole(Role.USER);
-        try {
-            user.setDepartment(Department.valueOf(request.department().toUpperCase()));
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Geçersiz departman!");
-        }
-        userRepo.save(user);
 
+        user.setDepartment(request.department());
+
+        userRepo.save(user);
         return mapToAuthResponse(user);
     }
 
@@ -53,17 +52,18 @@ public class AuthService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.username(), request.password())
             );
-        } catch (Exception e) {
-            throw new RuntimeException("Kullanıcı adı veya şifre hatalı!");
+        }catch (org.springframework.security.authentication.BadCredentialsException e) {
+            throw new AccessDeniedException("Invalid username or password");
+        }catch (Exception e) {
+            throw new BadRequestException("Authentication failed: " + e.getMessage());
         }
 
         User user = userRepo.findByUsername(request.username());
 
         if (user == null) {
-            throw new RuntimeException("Kullanıcı bulunamadı!");
+            throw new ResourceNotFoundException("User not found with username: " + request.username());
         }
         return mapToAuthResponse(user);
-
     }
 
     private AuthResponse mapToAuthResponse(User user) {
@@ -77,6 +77,4 @@ public class AuthService {
                 user.getRole().name()
         );
     }
-
-
 }
