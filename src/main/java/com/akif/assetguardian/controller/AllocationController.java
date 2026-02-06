@@ -24,16 +24,14 @@ public class AllocationController {
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PostMapping
-    public ResponseEntity<Void> allocateAssets(@Valid @RequestBody AssetAllocationRequest request) {
-        allocationService.allocateAssetToDemand(request.assetId(), request.demandId(), request.returnDate(), request.notes());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<AssetAllocationResponse> allocateAssets(@Valid @RequestBody AssetAllocationRequest request) {
+        return new ResponseEntity<>(allocationService.allocateAssetToDemand(request.assetId(), request.demandId(), request.returnDate(), request.notes()), HttpStatus.CREATED);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     @PutMapping("/{allocationId}")
-    public ResponseEntity<Void> returnAsset(@Positive(message = "Allocation ID must be a positive value!") @PathVariable int allocationId) {
-        allocationService.returnAllocatedAsset(allocationId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AssetAllocationResponse> returnAsset(@Positive(message = "Allocation ID must be a positive value!") @PathVariable int allocationId) {
+        return new ResponseEntity<>(allocationService.returnAllocatedAsset(allocationId), HttpStatus.OK);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")

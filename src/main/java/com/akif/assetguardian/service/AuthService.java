@@ -13,6 +13,7 @@ import com.akif.assetguardian.repository.UserRepo;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class AuthService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.username(), request.password())
             );
-        }catch (org.springframework.security.authentication.BadCredentialsException e) {
+        }catch (BadCredentialsException e) {
             throw new AccessDeniedException("Invalid username or password");
         }catch (Exception e) {
             throw new BadRequestException("Authentication failed: " + e.getMessage());

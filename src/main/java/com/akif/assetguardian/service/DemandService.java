@@ -107,11 +107,11 @@ public class DemandService {
 
     @Transactional
     public void deleteDemand(int demandId) {
-        Demand existingDemand = getPendingDemandOrThrow(demandId);
-
-        if (!SecurityUtils.isOwnerOrAdmin(existingDemand.getUser().getId())) {
+        if (!SecurityUtils.isOwnerOrAdmin(new Demand().getUser().getId())) {
             throw new AccessDeniedException("You are not authorized to delete this demand!");
         }
+
+        Demand existingDemand = getPendingDemandOrThrow(demandId);
 
         demandRepo.delete(existingDemand);
     }

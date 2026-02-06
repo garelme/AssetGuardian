@@ -10,7 +10,6 @@ import com.akif.assetguardian.exception.ResourceNotFoundException;
 import com.akif.assetguardian.model.*;
 import com.akif.assetguardian.repository.*;
 import com.akif.assetguardian.utils.SecurityUtils;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ public class AllocationService {
     private final UserRepo userRepo;
 
     @Transactional
-    public void allocateAssetToDemand(int assetId, int demandId, LocalDate returnDate, String notes)  {
+    public AssetAllocationResponse allocateAssetToDemand(int assetId, int demandId, LocalDate returnDate, String notes)  {
         Demand demand = demandRepo.findById(demandId).orElseThrow(() -> new ResourceNotFoundException("Demand not found"));
 
         Integer currentAdminId = SecurityUtils.getCurrentUserId();
@@ -60,10 +59,11 @@ public class AllocationService {
         demand.setStatus(DemandStatus.COMPLETED);
 
         allocationRepo.save(allocation);
+        return mapToResponse(allocation);
     }
 
     @Transactional
-    public void returnAllocatedAsset(int allocationId) {
+    public AssetAllocationResponse returnAllocatedAsset(int allocationId) {
         Allocation allocation = allocationRepo.findById(allocationId)
                 .orElseThrow(() -> new ResourceNotFoundException("No allocation record found! ID: " + allocationId));
 
@@ -81,12 +81,15 @@ public class AllocationService {
         asset.setStatus(AssetStatus.IN_STOCK);
 
         updateAssignments(allocation.getUser(), asset, AssignmentStatus.RETURNED, adminOrManager,LocalDate.now());
+        allocationRepo.delete(allocation);
+
+        return mapToResponse(allocation);
     }
 
     public List<AssetAllocationResponse> getActiveAllocations() {
         List<Allocation> activeAllocations = allocationRepo.findByIsActiveTrue();
         return activeAllocations.stream()
-                .map(allocation ->  mapToResponse(allocation))
+                .map(this::mapToResponse)
                 .toList();
     }
 

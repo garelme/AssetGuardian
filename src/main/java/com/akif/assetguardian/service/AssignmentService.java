@@ -34,7 +34,11 @@ public class AssignmentService {
                 assignment.getAsset().getName(),
                 assignment.getAsset().getSerialNumber(),
                 assignment.getUser().getName(),
-                assignment.getUser().getDepartment().name()
+                assignment.getUser().getDepartment().name(),
+                assignment.getAssignedDate(),
+                assignment.getUpdatedAt(),
+                assignment.getStatus(),
+                assignment.getAssignedBy().getId()
         );
     }
 }
