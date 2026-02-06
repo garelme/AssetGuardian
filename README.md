@@ -1,68 +1,98 @@
-🛡️ AssetGuardian: Kurumsal Varlık Yönetim Sistemi
-AssetGuardian; işletmelerin fiziksel ve dijital varlıklarını, personel üzerindeki zimmet süreçlerini ve varlık taleplerini uçtan uca yönetebilmeleri için geliştirilmiş bir Backend çözümüdür. Sistem, endüstri standardı olan JWT Auth ve kapsamlı bir rol tabanlı erişim kontrolü (RBAC) mimarisi üzerine inşa edilmiştir.
+# 🛡️ AssetGuardian: Enterprise Asset Management System
 
-🚀 Teknolojik Altyapı
-Çekirdek: Java 21 & Spring Boot 3.5.6
+**AssetGuardian** is a backend solution developed to manage their physical and digital assets, personnel assignment processes, and asset demands from end to end. The system is built on industry-standard **JWT Auth** and a comprehensive **Role-Based Access Control (RBAC)** architecture.
 
-Veri Katmanı: Spring Data JPA & PostgreSQL
+---
 
-Güvenlik: Spring Security & JSON Web Token (JWT)
+## 🚀 Technology Stack
 
-Dokümantasyon: SpringDoc OpenAPI (Swagger UI)
+<p align="left">
+  <img src="https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring_Boot-3.5.6-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+</p>
 
-Konteynırlaştırma: Docker & Docker Compose
+* **Core:** Java 21 & Spring Boot 3.5.6
+* **Data Layer:** Spring Data JPA & PostgreSQL
+* **Security:** Spring Security & JSON Web Token (JWT)
+* **Documentation:** SpringDoc OpenAPI (Swagger UI)
+* **Containerization:** Docker & Docker Compose
+* **Libraries:** Lombok, ModelMapper, JavaFaker
 
-Kütüphaneler: Lombok, ModelMapper, JavaFaker
+---
 
-✨ Temel Modüller ve Yetenekler
-🔑 Güvenlik ve Yetkilendirme (/api/v1/auth)
-Güvenli kullanıcı kaydı ve JWT tabanlı stateless oturum yönetimi.
+## ✨ Core Modules and Features
 
-ADMIN, MANAGER ve USER rolleri ile modüler yetkilendirme katmanı.
+### 🔑 Security and Authentication (/api/v1/auth)
+* Secure user registration and JWT-based stateless session management.
+* Upon a successful login, the system generates a secure token that allows the user to perform authorized actions safely.
 
-📦 Envanter ve Varlık Kontrolü (/api/v1/assets)
-Varlıkların tam yaşam döngüsü yönetimi (Ekleme, Güncelleme, Silme).
+### 📦 Inventory and Asset Control (/api/v1/assets)
+* Full lifecycle management of assets (Add, Update, Delete).
+* **Batch Delete** support for high-volume data management.
 
-Yüksek hacimli veriler için Toplu Silme (Batch Delete) desteği.
+### 📝 Demand and Allocation Mechanism (/api/v1/demands & /api/v1/allocation)
+* Digital demand creation process for assets needed by personnel.
+* Manager approval flow for demands and assigning (**Allocation**) assets to approved demands.
+* Return tracking for assigned assets and monitoring of active inventory status.
 
-📝 Talep ve Tahsis Mekanizması (/api/v1/demands & /api/v1/allocation)
-Personelin ihtiyaç duyduğu varlıklar için dijital talep oluşturma süreci.
+### 📜 Assignment Records and Tracking (/api/v1/assignments)
+* **Record Viewing:** Central listing of all assignment history and current assignments on the system.
+* **Filtering:** Ability for managers and admins to search through history records by asset name.
+* **Authorized Access:** Only users with **ADMIN** and **MANAGER** roles can access sensitive assignment data.
 
-Taleplerin yönetici onayından geçmesi ve onaylı taleplere varlık zimmetleme (Allocation).
+### ⚙️ User and System Settings (/api/v1/settings)
+* User profile management and secure password update mechanism.
+* **Profile Management:** Profile photo upload infrastructure for users with **Multipart File** support.
+* **Admin Panel:** Dynamic updating of user roles via the system.
 
-Zimmetlenen varlıkların iade takibi ve aktif envanter durumunun izlenmesi.
+---
 
-📜 Zimmet Kayıtları ve İzleme (/api/v1/assignments)
-Kayıt Görüntüleme: Sistem üzerindeki tüm zimmetleme geçmişinin ve mevcut atamaların merkezi olarak listelenmesi.
+## 📦 Start the System
 
-Filtreleme: Yönetici ve müdürler için varlık ismine göre geçmiş kayıtlar içinde arama yapabilme imkanı.
+To run the project in any environment, simply follow these steps:
 
-Yetkili Erişimi: Hassas zimmet verilerine sadece ADMIN ve MANAGER rollerine sahip kullanıcıların erişebilmesi.
+1. **Package the Project:**
+   ```bash
+   ./mvnw clean package
+2. **Run with Docker:**
+   ```bash
+   docker-compose up --build
+This will automatically start both the PostgreSQL database and the Spring Boot application.   
 
-⚙️ Kullanıcı ve Sistem Ayarları (/api/v1/settings)
-Kullanıcı profil yönetimi ve güvenli şifre güncelleme mekanizması.
-
-Profil Yönetimi: Kullanıcılar için Multipart File desteğiyle profil fotoğrafı yükleme altyapısı.
-
-Admin Paneli: Kullanıcı rollerinin sistem üzerinden dinamik olarak güncellenmesi.
-
-📦 Kurulum ve Çalıştırma
-Projeyi Paketleyin:
-
-Bash
-./mvnw clean package
-Sistemi Başlatın:
-
-Bash
-docker-compose up --build
-📖 API Kullanımı
-Sistemin sunduğu tüm endpoint'ler Swagger üzerinden interaktif olarak incelenebilir:
+## 📖 API Usage
+Once the system is running, you can interact with all API endpoints using the Swagger interface:
 
 🔗 Swagger UI: http://localhost:8080/swagger-ui/index.html
 
-🛠️ Teknik Mimari Notları
-Veri Güvenliği: API uçları, PreAuthorize anotasyonları ile metot seviyesinde korunmaktadır.
+---
 
-Validasyon: @Validated ve @Positive gibi anotasyonlarla veri tutarlılığı giriş katmanında sağlanır.
+## 🛠️ Technical Architecture Notes
+* Data Security: All API endpoints are protected at the method level using @PreAuthorize annotations.
+* Data Validation: Consistency is ensured at the entry layer using @Validated, @Positive, and @NotEmpty annotations.
+* Performance: The DTO (Data Transfer Object) pattern is used throughout the project to optimize data transfer and prevent unnecessary information exposure.
 
-Performans: DTO yapısı sayesinde gereksiz veri transferi önlenir.
+## 📂 Project Structure
+
+```text
+AssetGuardian/
+├── src/
+│   ├── main/
+│   │   ├── java/com/akif/assetguardian/
+│   │   │   ├── config/        # Security and Bean configurations
+│   │   │   ├── controller/    # REST API Endpoints
+│   │   │   ├── service/       # Business logic implementation
+│   │   │   ├── repository/    # Database access layer (Spring Data JPA)
+│   │   │   ├── model/         # Database entities
+│   │   │   ├── DTO/           # Data Transfer Objects
+│   │   │   ├── exception/     # Global error handling and custom exceptions
+│   │   │   ├── security/      # JWT and Security filters
+│   │   │   ├── utils/         # Helper classes (JWT tools, etc.)
+│   │   │   └── enums/         # Status and Role definitions
+│   │   └── resources/
+│   │       ├── application.properties
+│   │       └── static/        # Profile image storage
+├── docker-compose.yml         # Multi-container orchestration
+├── Dockerfile                 # Docker image setup
+└── pom.xml                    # Maven dependencies
